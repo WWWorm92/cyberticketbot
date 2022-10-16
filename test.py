@@ -20,14 +20,14 @@ def get_text_messages(message):
 
 @bot.message_handler(content_types=['text', 'document', 'audio', 'photo'])
 def message_user(message):
-    print(type(message.chat.id), type(chat_id_tickets), bool(message.reply_to_message))
-    print(message.chat.id == chat_id_tickets, bool(message.reply_to_message))
+    #print(type(message.chat.id), type(chat_id_tickets), bool(message.reply_to_message))
+    #print(message.chat.id == chat_id_tickets, bool(message.reply_to_message))
     if message.chat.id == int(chat_id_user):
         bot.send_message(chat_id=chat_id_tickets, text=str(
             f'@{message.from_user.username}\n') + message.text)  # пересылка ответа пользователя в чат с поддержкой
     elif message.chat.id == int(chat_id_tickets) and message.reply_to_message:
-        print('replay')
-        print(message.reply_to_message.text.split('\n')[0] + message.text)
+        #print('replay')
+        #print(message.reply_to_message.text.split('\n')[0] + message.text)
         replay: str = message.reply_to_message.text.split('\n')[0] + '\n' + message.text
         bot.send_message(chat_id=int(chat_id_user), text=replay)  # пересылка ответа поддержки в чат с пользователем
 
