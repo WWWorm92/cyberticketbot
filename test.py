@@ -1,6 +1,7 @@
 import telebot
 import sqlite3
 
+
 bot = telebot.TeleBot('5308126595:AAG08b3BIlDCtqBH4Iq8lNFVpLHA7rbjn5o')
 chat_id_user = '-1001784446207'  # id чата  с пользователем
 chat_id_self = '445283271'  # id чата с ботом
