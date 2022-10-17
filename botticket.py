@@ -1,5 +1,6 @@
-import telebot, sqlite3, datetime
-from telebot import types
+import telebot
+import sqlite3
+import datetime
 
 bot = telebot.TeleBot('5308126595:AAG08b3BIlDCtqBH4Iq8lNFVpLHA7rbjn5o')
 chat_id_user = '-1001784446207'  # id чата  с пользователем
@@ -8,9 +9,8 @@ chat_id_tickets = '-857126611 '  # id чата с поддержкой
 conn = sqlite3.connect('db/botDB.db', check_same_thread=False)
 cursor = conn.cursor()
 dt = datetime.datetime.now()
-date = datetime.date.today().strftime("%Y/%M/%S")
+date = datetime.date.today().strftime("%Y/%M/%D")
 time = dt.time().strftime('%H:%M:%S')
-btn_close = 0
 ticket_counter = 0
 
 
@@ -28,15 +28,13 @@ def db_table_val(user_id: int, user_name: str, user_surname: str, username: str,
 def get_text_messages(message):
     if message.chat.id == int(chat_id_user):
         if message.text == '/ticket@cyberxproblems_bot' or message.text == '/ticket':
-            keyboard = types.InlineKeyboardMarkup()  # наша клавиатура
-            key_abort = types.InlineKeyboardButton(text='Отмена', callback_data='abort')
-            keyboard.add(key_abort)
             bot.send_message(chat_id=chat_id_user,
-                             text='Введите номер ПК и описание проблемы', reply_markup=keyboard)
+                             text='Введите номер ПК и описание проблемы')
             bot.register_next_step_handler(message, message_user)
         elif message.text == '/help' or message.text == '/help@cyberxproblems_bot':
             bot.send_message(chat_id=chat_id_user,
                              text='/ticket - Отправка тикета\n/ticketstop - Отмена тикета\n/help - Вызов справки по боту')
+            # message_user(message)  # запрос сообщения в чате с пользователем
         elif '/' in str(message.text):
             bot.send_message(chat_id=chat_id_user, text='Неверная команда,введите /help для отображения списка команд')
     else:
@@ -48,31 +46,21 @@ def message_user(message):
     try:
         if message.text == '/ticketstop@cyberxproblems_bot' or message.text == '/ticketstop':
             return
-        if btn_close == 1:
-            return
         if message.chat.id == int(chat_id_user):
-            ticket_counter = ticket_counter + 1
+            ticket_counter += 1
             bot.send_message(chat_id=chat_id_tickets, text='-------------------------------------\n' + str(
-                str(date) + '    ' + str(time) + '\n'+'Номер тикета: '+str(ticket_counter)+'\n'+'\n'
-                                                 f'@{message.from_user.username}\n') + message.text +
-                                                           '\n' + '-------------------------------------\n')  # пересылка ответа пользователя в чат с поддержкой
+                str(date) + '    ' + str(time) + '\n' + 'Номер тикета: ' + '#'+str(ticket_counter) + '\n\n'
+                                                                                                 f'@{message.from_user.username}\n') + message.text + '\n' + '-------------------------------------\n')  # пересылка ответа пользователя в чат с поддержкой
         elif message.chat.id == int(chat_id_tickets) and message.reply_to_message:
-            replay: str = '-------------------------------------\n' + message.reply_to_message.text.split('\n')[
-                2] + '\n' + 'Вопрос пользователя:' + '\n' + message.reply_to_message.text.split('\n')[
-                              3] + '\n' + 'Ответ Админа:' + '\n' + message.text + '\n' + '-------------------------------------'
+            replay: str = message.reply_to_message.text.split('\n')[
+                              4] +'\n'+ '-------------------------------------' + '\n' + 'Вопрос пользователя:' + '\n' + \
+                          message.reply_to_message.text.split('\n')[
+                              5] + '\n' + 'Ответ Админа:' + '\n' + message.text + '\n' + '-------------------------------------'
             bot.send_message(chat_id=int(chat_id_user), text=replay)  # пересылка ответа поддержки в чат с пользователем
+        print(message.reply_to_message)
         print(log_msg(message))
     except Exception as ex_send:
         print(ex_send)
-
-
-@bot.callback_query_handler(func=lambda call: True)
-def callback_worker(call):
-    global btn_close
-    if call.data == "abort":
-        bot.delete_message(call.message.chat.id, call.message.message_id - 1)
-        bot.delete_message(call.message.chat.id, call.message.message_id)
-        btn_close = 1
 
 
 def log_msg(msg):
