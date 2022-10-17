@@ -1,1 +1,1 @@
-bot: python3 botticket.py
+bot: python3 ticket.py
