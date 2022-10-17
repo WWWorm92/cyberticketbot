@@ -1,6 +1,6 @@
 import telebot, sqlite3, datetime
 from telebot import types
-
+import sys
 bot = telebot.TeleBot('5308126595:AAG08b3BIlDCtqBH4Iq8lNFVpLHA7rbjn5o')
 chat_id_user = '-1001784446207'  # id чата  с пользователем
 chat_id_admins = '-1001688181513'  # id чата с админами
@@ -26,6 +26,8 @@ def db_table_val(user_id: int, user_name: str, user_surname: str, username: str,
 
 @bot.message_handler(content_types=['text', 'document', 'audio', 'photo'])
 def get_text_messages(message):
+    global btn_close
+    btn_close = 0
     if message.chat.id == int(chat_id_user):
         if message.text == '/ticket@cyberxproblems_bot' or message.text == '/ticket':
             keyboard = types.InlineKeyboardMarkup()  # наша клавиатура
@@ -33,7 +35,9 @@ def get_text_messages(message):
             keyboard.add(key_abort)
             bot.send_message(chat_id=chat_id_user,
                              text='Введите номер ПК и описание проблемы', reply_markup=keyboard)
+            print(str(btn_close) + 'old')
             bot.register_next_step_handler(message, message_user)
+
         elif message.text == '/help' or message.text == '/help@cyberxproblems_bot':
             bot.send_message(chat_id=chat_id_user,
                              text='/ticket - Отправка тикета\n/ticketstop - Отмена тикета\n/help - Вызов справки по боту')
@@ -46,12 +50,11 @@ def get_text_messages(message):
 def message_user(message):
     global ticket_counter
     try:
-        if message.text == '/ticketstop@cyberxproblems_bot' or message.text == '/ticketstop':
-            return
-        if btn_close == 1:
+        print(btn_close)
+        if message.text == '/ticketstop@cyberxproblems_bot' or message.text == '/ticketstop' or btn_close == 1:
             return
         if message.chat.id == int(chat_id_user):
-            ticket_counter = ticket_counter + 1
+            ticket_counter += 1
             bot.send_message(chat_id=chat_id_tickets, text='-------------------------------------\n' + str(
                 str(date) + '    ' + str(time) + '\n'+'Номер тикета: '+str(ticket_counter)+'\n'+'\n'
                                                  f'@{message.from_user.username}\n') + message.text +
@@ -69,10 +72,13 @@ def message_user(message):
 @bot.callback_query_handler(func=lambda call: True)
 def callback_worker(call):
     global btn_close
+    btn_close=0
     if call.data == "abort":
         bot.delete_message(call.message.chat.id, call.message.message_id - 1)
         bot.delete_message(call.message.chat.id, call.message.message_id)
         btn_close = 1
+        bot.clear_step_handler_by_chat_id(chat_id=call.message.chat.id)
+        quit()
 
 
 def log_msg(msg):
