@@ -70,7 +70,7 @@ def log_msg(msg):
     muid = str(msg.from_user.id)
     msgid = msg.message_id
     username = msg.from_user.username
-    print('=================================================================================')
+    print('==================================================================================')
     if mcln != 'None':
         print(f"Message from {mcfn} {mcln}  ,Chat iD: {mcid} ,User ID: {muid} ,User Name:{username}")
         db_table_val(user_id=int(muid), user_name=mcfn, user_surname=mcln, username=username, message_id=msgid,
@@ -80,7 +80,7 @@ def log_msg(msg):
         db_table_val(user_id=int(muid), user_name=mcfn, user_surname=mcln, username=username, message_id=msgid,
                      message_text=msg.text)
     print('Text:', str(msg.text))
-    print('=================================================================================')
+    print('==================================================================================')
 
 
 try:
