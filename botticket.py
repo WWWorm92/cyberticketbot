@@ -14,10 +14,13 @@ time = dt.time().strftime('%H:%M:%S')
 
 
 def db_table_val(user_id: int, user_name: str, user_surname: str, username: str, message_id: int, message_text: str):
-    cursor.execute(
-        'INSERT INTO botlog (user_id, user_name, user_surname, username,message_id,message_text) VALUES (?, ?, ?, ?, ?, ?)',
-        (user_id, user_name, user_surname, username, message_id, message_text))
-    conn.commit()
+    try:
+        cursor.execute(
+            'INSERT INTO botlog (user_id, user_name, user_surname, username,message_id,message_text) VALUES (?, ?, ?, ?, ?, ?)',
+            (user_id, user_name, user_surname, username, message_id, message_text))
+        conn.commit()
+    except Exception as ex_pict:
+        print(ex_pict)
 
 
 @bot.message_handler(content_types=['text', 'document', 'audio', 'photo'])
@@ -38,16 +41,21 @@ def get_text_messages(message):
 
 
 def message_user(message):
-    if message.text == '/ticketstop@cyberxproblems_bot' or message.text == '/ticketstop':
-        return
-    if message.chat.id == int(chat_id_user):
-        bot.send_message(chat_id=chat_id_tickets, text='-------------------------------------\n' + str(
-            str(date) + '    ' + str(time) + '\n'
-                                             f'@{message.from_user.username}\n') + message.text +'\n'+ '-------------------------------------\n')  # пересылка ответа пользователя в чат с поддержкой
-    elif message.chat.id == int(chat_id_tickets) and message.reply_to_message:
-        replay: str = '-------------------------------------\n'+ message.reply_to_message.text.split('\n')[2] + '\n' + 'Вопрос пользователя:' + '\n' + message.reply_to_message.text.split('\n')[3] + '\n'+ 'Ответ Админа:' +'\n' + message.text+'\n'+'-------------------------------------'
-        bot.send_message(chat_id=int(chat_id_user), text=replay)  # пересылка ответа поддержки в чат с пользователем
-    print(log_msg(message))
+   try:
+        if message.text == '/ticketstop@cyberxproblems_bot' or message.text == '/ticketstop':
+            return
+        if message.chat.id == int(chat_id_user):
+            bot.send_message(chat_id=chat_id_tickets, text='-------------------------------------\n' + str(
+                str(date) + '    ' + str(time) + '\n'
+                                                 f'@{message.from_user.username}\n') + message.text + '\n' + '-------------------------------------\n')  # пересылка ответа пользователя в чат с поддержкой
+        elif message.chat.id == int(chat_id_tickets) and message.reply_to_message:
+            replay: str = '-------------------------------------\n' + message.reply_to_message.text.split('\n')[
+                2] + '\n' + 'Вопрос пользователя:' + '\n' + message.reply_to_message.text.split('\n')[
+                              3] + '\n' + 'Ответ Админа:' + '\n' + message.text + '\n' + '-------------------------------------'
+            bot.send_message(chat_id=int(chat_id_user), text=replay)  # пересылка ответа поддержки в чат с пользователем
+        print(log_msg(message))
+   except Exception as ex_send:
+       print(ex_send)
 
 
 def log_msg(msg):
@@ -73,5 +81,5 @@ def log_msg(msg):
 try:
     # bot.polling(interval=1, timeout=2)
     bot.infinity_polling()
-except Exception as ex1:
-    print(ex1)
+except Exception as ex_poll:
+    print(ex_poll)
