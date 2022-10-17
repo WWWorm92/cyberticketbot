@@ -4,7 +4,7 @@ import datetime
 
 bot = telebot.TeleBot('5308126595:AAG08b3BIlDCtqBH4Iq8lNFVpLHA7rbjn5o')
 chat_id_user = '-1001784446207'  # id чата  с пользователем
-chat_id_self = '445283271'  # id чата с ботом
+chat_id_admins = '-1001688181513'  # id чата с админами
 chat_id_tickets = '-857126611 '  # id чата с поддержкой
 conn = sqlite3.connect('db/botDB.db', check_same_thread=False)
 cursor = conn.cursor()
@@ -41,12 +41,11 @@ def message_user(message):
     if message.text == '/ticketstop@cyberxproblems_bot' or message.text == '/ticketstop':
         return
     if message.chat.id == int(chat_id_user):
-        # bot.send_message(chat_id=chat_id_tickets, text=str(date) + '    ' + str(time))
         bot.send_message(chat_id=chat_id_tickets, text='-------------------------------------\n' + str(
             str(date) + '    ' + str(time) + '\n'
                                              f'@{message.from_user.username}\n') + message.text +'\n'+ '-------------------------------------\n')  # пересылка ответа пользователя в чат с поддержкой
     elif message.chat.id == int(chat_id_tickets) and message.reply_to_message:
-        replay: str = '-------------------------------------\n'+message.reply_to_message.text.split('\n')[2] + '\n' + message.text+'\n'+'-------------------------------------'
+        replay: str = '-------------------------------------\n'+ message.reply_to_message.text.split('\n')[2] + '\n' + 'Вопрос пользователя:' + '\n' + message.reply_to_message.text.split('\n')[3] + '\n'+ 'Ответ Админа:' +'\n' + message.text+'\n'+'-------------------------------------'
         bot.send_message(chat_id=int(chat_id_user), text=replay)  # пересылка ответа поддержки в чат с пользователем
     print(log_msg(message))
 
