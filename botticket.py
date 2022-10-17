@@ -11,6 +11,7 @@ dt = datetime.datetime.now()
 date = datetime.date.today().strftime("%Y/%M/%S")
 time = dt.time().strftime('%H:%M:%S')
 btn_close = 0
+ticket_counter = 0
 
 
 def db_table_val(user_id: int, user_name: str, user_surname: str, username: str, message_id: int, message_text: str):
@@ -43,14 +44,16 @@ def get_text_messages(message):
 
 
 def message_user(message):
+    global ticket_counter
     try:
         if message.text == '/ticketstop@cyberxproblems_bot' or message.text == '/ticketstop':
             return
         if btn_close == 1:
             return
         if message.chat.id == int(chat_id_user):
+            ticket_counter = ticket_counter + 1
             bot.send_message(chat_id=chat_id_tickets, text='-------------------------------------\n' + str(
-                str(date) + '    ' + str(time) + '\n'
+                str(date) + '    ' + str(time) + '\n'+'Номер тикета: '+str(ticket_counter)+'\n'+'\n'
                                                  f'@{message.from_user.username}\n') + message.text +
                                                            '\n' + '-------------------------------------\n')  # пересылка ответа пользователя в чат с поддержкой
         elif message.chat.id == int(chat_id_tickets) and message.reply_to_message:
