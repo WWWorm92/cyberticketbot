@@ -18,14 +18,16 @@ def db_table_val(user_id: int, user_name: str, user_surname: str, username: str,
 
 @bot.message_handler(content_types=['text', 'document', 'audio', 'photo'])
 def get_text_messages(message):
-    if message.text == '/ticket@cyberxproblems_bot' or message.text == '/ticket':
-        bot.send_message(chat_id=chat_id_user,
-                         text='Введите номер ПК и описание проблемы')
-        bot.register_next_step_handler(message, message_user)
-        #message_user(message)  # запрос сообщения в чате с пользователем
-    else:
-        bot.send_message(chat_id=chat_id_user, text='Неверная команда,введите /help для отображения списка команд')
-
+    if message.chat.id==int(chat_id_user):
+        if message.text == '/ticket@cyberxproblems_bot' or message.text == '/ticket':
+            bot.send_message(chat_id=chat_id_user,
+                             text='Введите номер ПК и описание проблемы')
+            bot.register_next_step_handler(message, message_user)
+            #message_user(message)  # запрос сообщения в чате с пользователем
+        else:
+            bot.send_message(chat_id=chat_id_user, text='Неверная команда,введите /help для отображения списка команд')
+    else :
+        message_user(message)
 
 def message_user(message):
     if message.chat.id == int(chat_id_user):
@@ -58,7 +60,7 @@ def log_msg(msg):
 
 
 try:
-    bot.polling(interval=1, timeout=2)
-    # bot.infinity_polling()
+    #bot.polling(interval=1, timeout=2)
+    bot.infinity_polling()
 except Exception as ex1:
     print(ex1)
