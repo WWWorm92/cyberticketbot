@@ -1,2 +1,4 @@
 telebot~=0.0.4
 PyTelegramBotAPI
+pysqlite3
+pytz
