@@ -1,4 +1,4 @@
-import telebot, sqlite3, datetime
+import telebot, sqlite3, datetime, pytz
 from telebot import types
 
 
@@ -8,7 +8,7 @@ chat_id_admins = '-1001688181513'  # id чата с админами
 chat_id_tickets = '-857126611 '  # id чата с поддержкой
 conn = sqlite3.connect('db/botDB.db', check_same_thread=False)
 cursor = conn.cursor()
-dt = datetime.datetime.now()
+dt = datetime.datetime.now(pytz.timezone('Europe/Moscow'))
 date = datetime.date.today().strftime("%d/%m/%Y")
 time = dt.time().strftime('%H:%M:%S')
 ticket_counter = 0
