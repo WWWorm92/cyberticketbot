@@ -1,0 +1,8 @@
+====================================ФОРМАТИРОВАНИЕ ВЫВОДА НИКА==============================================
+bot.send_message(message.chat.id, "[{} {}](tg://user?id={})"
+                     .format(message.from_user.first_name,
+                             message.from_user.last_name, message.from_user.id), disable_web_page_preview=True,
+                     parse_mode="Markdown")
+====================================БИБЛИОТЕКА TELEBOT НА РУССКОМ===============================================
+https://github.com/Inffix/telebot_rus
+===============================================================================================================

@@ -2,13 +2,13 @@ import telebot, sqlite3, datetime
 from telebot import types
 
 bot = telebot.TeleBot('5308126595:AAG08b3BIlDCtqBH4Iq8lNFVpLHA7rbjn5o')
-chat_id_user = '-1001784446207'  # id чата  с пользователем
+chat_id_user = '-842049384'  # id чата  с пользователем
 chat_id_admins = '-1001688181513'  # id чата с админами
 chat_id_tickets = '-857126611 '  # id чата с поддержкой
 conn = sqlite3.connect('db/botDB.db', check_same_thread=False)
 cursor = conn.cursor()
 dt = datetime.datetime.now()
-date = datetime.date.today().strftime("%Y/%M/%D")
+date = datetime.date.today().strftime("%d/%m/%Y")
 time = dt.time().strftime('%H:%M:%S')
 ticket_counter = 0
 
@@ -36,7 +36,6 @@ def get_text_messages(message):
         elif message.text == '/help' or message.text == '/help@cyberxproblems_bot':
             bot.send_message(chat_id=chat_id_user,
                              text='/ticket - Отправка тикета\n/ticketstop - Отмена тикета\n/help - Вызов справки по боту')
-            # message_user(message)  # запрос сообщения в чате с пользователем
         elif '/' in str(message.text):
             bot.send_message(chat_id=chat_id_user, text='Неверная команда,введите /help для отображения списка команд')
     else:
@@ -57,12 +56,13 @@ def message_user(message):
             replay: str = message.reply_to_message.text.split('\n')[
                               4] + '\n' + '-------------------------------------' + '\n' + 'Вопрос пользователя:' + '\n' + \
                           message.reply_to_message.text.split('\n')[
-                              5] + '\n' + 'Ответ Админа:' + '\n' + message.text + '\n' + '-------------------------------------'
+                              5] + '\n' + 'Ответ админа:' + '\n' + message.text + '\n' + '-------------------------------------'
             bot.send_message(chat_id=int(chat_id_user), text=replay)  # пересылка ответа поддержки в чат с пользователем
         print(message.reply_to_message)
         print(log_msg(message))
     except Exception as ex_send:
         print(ex_send)
+
 
 @bot.callback_query_handler(func=lambda call: True)
 def callback_worker(call):
@@ -70,6 +70,8 @@ def callback_worker(call):
         bot.delete_message(call.message.chat.id, call.message.message_id - 1)
         bot.delete_message(call.message.chat.id, call.message.message_id)
         bot.clear_step_handler_by_chat_id(chat_id=call.message.chat.id)
+
+
 def log_msg(msg):
     mcfn = str(msg.chat.first_name)
     mcln = str(msg.chat.last_name)
