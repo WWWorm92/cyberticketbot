@@ -3,9 +3,9 @@ from telebot import types
 
 
 bot = telebot.TeleBot('5308126595:AAG08b3BIlDCtqBH4Iq8lNFVpLHA7rbjn5o')
-chat_id_user = '-842049384'  # id чата  с пользователем
+chat_id_user = '-891875260'  # id чата  с пользователем
 chat_id_admins = '-1001688181513'  # id чата с админами
-chat_id_tickets = '-857126611 '  # id чата с поддержкой
+chat_id_tickets = '-856880830'  # id чата с поддержкой
 conn = sqlite3.connect('db/botDB.db', check_same_thread=False)
 cursor = conn.cursor()
 dt = datetime.datetime.now(pytz.timezone('Europe/Moscow'))
