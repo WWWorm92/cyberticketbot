@@ -1,7 +1,6 @@
 import telebot, sqlite3, datetime, pytz
 from telebot import types
 
-
 bot = telebot.TeleBot('5308126595:AAG08b3BIlDCtqBH4Iq8lNFVpLHA7rbjn5o')
 chat_id_user = '-891875260'  # id чата  с пользователем
 chat_id_admins = '-1001688181513'  # id чата с админами
@@ -12,6 +11,7 @@ dt = datetime.datetime.now(pytz.timezone('Europe/Moscow'))
 date = datetime.date.today().strftime("%d/%m/%Y")
 time = dt.time().strftime('%H:%M:%S')
 ticket_counter = 0
+pc_number = 0
 
 
 def db_table_val(user_id: int, user_name: str, user_surname: str, username: str, message_id: int, message_text: str):
@@ -21,7 +21,7 @@ def db_table_val(user_id: int, user_name: str, user_surname: str, username: str,
             (user_id, user_name, user_surname, username, message_id, message_text))
         conn.commit()
     except Exception as ex_pict:
-        print(ex_pict)
+        print(str(ex_pict)+' (DB EXCEPTION)')
 
 
 @bot.message_handler(content_types=['text', 'document', 'audio', 'photo'])
@@ -59,10 +59,13 @@ def message_user(message):
                           message.reply_to_message.text.split('\n')[
                               5] + '\n' + 'Ответ админа:' + '\n' + message.text + '\n' + '-------------------------------------'
             bot.send_message(chat_id=int(chat_id_user), text=replay)  # пересылка ответа поддержки в чат с пользователем
-        print(message.reply_to_message)
+
+        # ==========DEBUG MESSAGES======================
+        # print(message.reply_to_message)
         print(log_msg(message))
+        print('ARRAY LENGHT: ' + str(len(message.reply_to_message.text.split('\n')))+'\n')
     except Exception as ex_send:
-        print(ex_send)
+        print(str(ex_send)+' (SENDER EXCEPTION)\n')
 
 
 @bot.callback_query_handler(func=lambda call: True)
@@ -97,4 +100,4 @@ try:
     # bot.polling(interval=1, timeout=2)
     bot.infinity_polling()
 except Exception as ex_poll:
-    print(ex_poll)
+    print(str(ex_poll)+' (UPDATER EXCEPTION)\n')
