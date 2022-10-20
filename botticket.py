@@ -46,6 +46,7 @@ def get_text_messages(message):
 def message_user(message):
     global ticket_counter
     try:
+
         if message.text == '/ticketstop@cyberxproblems_bot' or message.text == '/ticketstop':
             return
         if message.chat.id == int(chat_id_user):
@@ -54,10 +55,13 @@ def message_user(message):
                 str(date) + '    ' + str(time) + '\n' + 'Номер тикета: ' + '#' + str(ticket_counter) + '\n\n'
                                                                                                        f'@{message.from_user.username}\n') + message.text + '\n' + '-------------------------------------\n')  # пересылка ответа пользователя в чат с поддержкой
         elif message.chat.id == int(chat_id_tickets) and message.reply_to_message:
+            m = message.reply_to_message.text.split('\n')
+            del m[0:5], m[-1]
+            a = '\n'.join(m)
             replay: str = message.reply_to_message.text.split('\n')[
-                              4] + '\n' + '-------------------------------------' + '\n' + 'Вопрос пользователя:' + '\n' + \
-                          message.reply_to_message.text.split('\n')[
-                              5] + '\n' + 'Ответ админа:' + '\n' + message.text + '\n' + '-------------------------------------'
+                              4] + '\n' + '-------------------------------------' + '\n' + 'Вопрос пользователя:' + '\n' + a + '\n' + 'Ответ админа:' + '\n' + message.text + '\n' + '-------------------------------------'
+            print(message.reply_to_message.text.split('\n'))
+            print(m)
             bot.send_message(chat_id=int(chat_id_user), text=replay)  # пересылка ответа поддержки в чат с пользователем
 
         # ==========DEBUG MESSAGES======================
