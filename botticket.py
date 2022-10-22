@@ -2,8 +2,8 @@ import telebot, sqlite3, datetime, pytz
 from telebot import types
 
 bot = telebot.TeleBot('5308126595:AAG08b3BIlDCtqBH4Iq8lNFVpLHA7rbjn5o')
-chat_id_user = '-891875260'  # id чата  с пользователем
-chat_id_admins = '-1001688181513'  # id чата с админами
+#chat_id_user = '-891875260'  # id чата с пользователем
+chat_id_user = '-1001688181513'  # id чата с админами
 chat_id_tickets = '-856880830'  # id чата с поддержкой
 conn = sqlite3.connect('db/botDB.db', check_same_thread=False)
 cursor = conn.cursor()
@@ -21,7 +21,7 @@ def db_table_val(user_id: int, user_name: str, user_surname: str, username: str,
             (user_id, user_name, user_surname, username, message_id, message_text))
         conn.commit()
     except Exception as ex_pict:
-        print(str(ex_pict) + ' (DB EXCEPTION)')
+        print(str(ex_pict)+' (DB EXCEPTION)')
 
 
 @bot.message_handler(content_types=['text', 'document', 'audio', 'photo'])
@@ -46,7 +46,6 @@ def get_text_messages(message):
 def message_user(message):
     global ticket_counter
     try:
-
         if message.text == '/ticketstop@cyberxproblems_bot' or message.text == '/ticketstop':
             return
         if message.chat.id == int(chat_id_user):
@@ -56,19 +55,20 @@ def message_user(message):
                                                                                                        f'@{message.from_user.username}\n') + message.text + '\n' + '-------------------------------------\n')  # пересылка ответа пользователя в чат с поддержкой
         elif message.chat.id == int(chat_id_tickets) and message.reply_to_message:
             m = message.reply_to_message.text.split('\n')
-            del m[0:5]
-            m.pop()
+            del m[0:5], m[-1]
             a = '\n'.join(m)
             replay: str = message.reply_to_message.text.split('\n')[
                               4] + '\n' + '-------------------------------------' + '\n' + 'Вопрос пользователя:' + '\n' + a + '\n' + 'Ответ админа:' + '\n' + message.text + '\n' + '-------------------------------------'
+            print(message.reply_to_message.text.split('\n'))
+            print(m)
             bot.send_message(chat_id=int(chat_id_user), text=replay)  # пересылка ответа поддержки в чат с пользователем
 
         # ==========DEBUG MESSAGES======================
         # print(message.reply_to_message)
-        print(log_msg(message))
-        # print('ARRAY LENGHT: ' + str(len(message.reply_to_message.text.split('\n')))+'\n')
+        #print(log_msg(message))
+        print('ARRAY LENGHT: ' + str(len(message.reply_to_message.text.split('\n')))+'\n')
     except Exception as ex_send:
-        print(str(ex_send) + ' (SENDER EXCEPTION)\n')
+        print(str(ex_send)+' (SENDER EXCEPTION)\n')
 
 
 @bot.callback_query_handler(func=lambda call: True)
@@ -103,4 +103,4 @@ try:
     # bot.polling(interval=1, timeout=2)
     bot.infinity_polling()
 except Exception as ex_poll:
-    print(str(ex_poll) + ' (UPDATER EXCEPTION)\n')
+    print(str(ex_poll)+' (UPDATER EXCEPTION)\n')
