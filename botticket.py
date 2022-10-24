@@ -2,6 +2,7 @@ import telebot, sqlite3, datetime, pytz
 from telebot import types
 
 bot = telebot.TeleBot('5308126595:AAG08b3BIlDCtqBH4Iq8lNFVpLHA7rbjn5o')
+
 #chat_id_user = '-891875260'  # id чата с пользователем
 chat_id_user = '-1001688181513'  # id чата с админами
 chat_id_tickets = '-856880830'  # id чата с поддержкой
