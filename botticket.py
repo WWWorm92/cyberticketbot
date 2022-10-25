@@ -70,6 +70,7 @@ def message_user(message):
         print('ARRAY LENGHT: ' + str(len(message.reply_to_message.text.split('\n')))+'\n')
     except Exception as ex_send:
         print(str(ex_send)+' (SENDER EXCEPTION)\n')
+        bot.send_message(chat_id=int(chat_id_user), text='Вы можете отправлять только текст')
 
 
 @bot.callback_query_handler(func=lambda call: True)
